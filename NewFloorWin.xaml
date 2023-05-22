@@ -1,0 +1,19 @@
+﻿<Window x:Class="House_Designer.NewFloorWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:House_Designer"
+        mc:Ignorable="d"
+        Title="Create New Floor" WindowStartupLocation="CenterScreen" Height="250" Width="300">
+    <Grid>
+        <Grid Margin="86,66,86,66">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button x:Name="RoomAboveBut" Content="Add floor above" Grid.Row="0" Click="RoomBut_Click" Tag="0"/>
+            <Button x:Name="RoomBelowBut" Content="Add floor below" Grid.Row="1" Click="RoomBut_Click" Tag="1"/>
+        </Grid>
+    </Grid>
+</Window>

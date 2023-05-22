@@ -70,6 +70,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AttachWin.xaml.cs">
+      <DependentUpon>AttachWin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Floor.cs" />
+    <Compile Include="NewFloorWin.xaml.cs">
+      <DependentUpon>NewFloorWin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Room.cs" />
+    <Page Include="AttachWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -89,6 +101,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewFloorWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -5,9 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:House_Designer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1600" PreviewMouseLeftButtonDown="Canvas_PreviewMouseLeftButtonDown" ResizeMode="NoResize">
+        Title="House Designer" Height="800" Width="1600" PreviewMouseLeftButtonDown="Canvas_PreviewMouseLeftButtonDown" ResizeMode="NoResize" Loaded="Canvas_Loaded">
     <Grid x:Name="Screen">
-        <Canvas x:Name="PlaceCanvas"/>
+        <Canvas x:Name="PlaceCanvas" Margin="72,102,0,0"/>
+        <Grid Margin="0,0,0,687">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="PlaceButton" Content="Place new Room" Click="PlaceButton_Click" Grid.Column="0"/>
+            <Label Content="Placement Location" FontSize="25" Grid.Column="1" Background="#FFDDDDDD" BorderBrush="#FF707070" BorderThickness="1"/>
+            <ComboBox x:Name="PlaceModeBox" Grid.Column="2" SelectedIndex="0">
+                <ComboBoxItem Content="Right"/>
+                <ComboBoxItem Content="Bottom"/>
+                <ComboBoxItem Content="Left"/>
+                <ComboBoxItem Content="Top"/>
+                <ComboBoxItem Content="FreeForm toggle (Clipping allowed)"/>
+            </ComboBox>
+            <StackPanel Grid.Column="3">
+                <Label Content="Floor Level" FontSize="16"/>
+                <ComboBox x:Name="HouseLevel" SelectedIndex="0" SelectionChanged="HouseLevel_SelectionChanged">
+                    <ComboBoxItem Content="Floor 0"/>
 
+                </ComboBox>
+            </StackPanel>
+            <Button x:Name="AddFloor" Content="Add new floor" Grid.Column="4" Click="AddFloor_Click"/>
+        </Grid>
+        <Label x:Name="ClickLabel" Content="Click anywhere to place the first room" Background="LightGray" FontSize="40" Margin="0,0,0,687"/>
+        
     </Grid>
 </Window>

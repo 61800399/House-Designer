@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:House_Designer"
         mc:Ignorable="d"
-        Title="InputWindow" Height="300" Width="275">
+        Title="InputWindow" WindowStartupLocation="CenterScreen" Height="400" Width="275" ResizeMode="NoResize">
     <Grid>
-        
+        <Grid x:Name="PropertiesGrid" Margin="44,77,45,62">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Width"/>
+            <TextBox x:Name="WidthProp" Grid.Column="1" TextWrapping="NoWrap" Text="" PreviewTextInput="WidthProp_PreviewTextInput"/>
+            <Label Grid.Row="1" Content="Height"/>
+            <TextBox x:Name="heightProp" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" Text="" PreviewTextInput="heightProp_PreviewTextInput"/>
+            <Label Content="Coordinate X" Grid.Row="2" Grid.Column="0"/>
+            <Label Content="Cordinate Y" Grid.Row="3" Grid.Column="0"/>
+            <Label Content="Color" Grid.Row="4" Grid.Column="0"/>
+            <TextBox x:Name="XCoordBox" TextWrapping="NoWrap" Text="" Grid.Row="2" Grid.Column="1" PreviewTextInput="XCoordBox_PreviewTextInput"/>
+            <TextBox x:Name="YCoordBox" TextWrapping="NoWrap" Text="" Grid.Row="3" Grid.Column="1" PreviewTextInput="YCoordBox_PreviewTextInput"/>
+            <ComboBox x:Name="ColorBox" Grid.Column="1" Grid.Row="4" IsReadOnly="True" SelectionChanged="ColorBox_SelectionChanged" SelectedIndex="0">
+                <ComboBoxItem Background="#FF847E7E" Content="Light Grey (Default)" Tag="LightGray"/>
+                <ComboBoxItem Background="Red" Content="Red" Tag="Red"/>
+                <ComboBoxItem Background="#FF0056FF" Content="Blue" Tag="Blue"/>
+                <ComboBoxItem Background="Black" Content="Black/Empty" Tag="Black"/>
+            </ComboBox>
+            <Button x:Name="AttachButt" Grid.Row="5" Grid.Column="0" Content="AttachRooms" Click="AttachButt_Click"/>
+            <ComboBox x:Name="AttachSelector" Grid.Row="5" Grid.Column="1" IsReadOnly="True" SelectedIndex="0" FontSize="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="AttachSelector_SelectionChanged">
+                <ComboBoxItem Content="Attach Right"/>
+                <ComboBoxItem Content="Attach Bottom"/>
+                <ComboBoxItem Content="Attach Left"/>
+                <ComboBoxItem Content="Attach Top"/>
+            </ComboBox>
+            <CheckBox x:Name="BaseRoomCheck" Grid.Row="7" Content="is Base room" Click="BaseRoomCheck_Checked"/>
+        </Grid>
+        <Grid Margin="10,10,10,295">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Room Name: " FontSize="20"/>
+            <TextBox x:Name="RoomName" Grid.Column="1" FontSize="20" TextWrapping="NoWrap" Text="NewRoom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="RoomName_TextInput"/>
+        </Grid>
     </Grid>
 </Window>
