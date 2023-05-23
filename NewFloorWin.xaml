@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:House_Designer"
         mc:Ignorable="d"
-        Title="Create New Floor" WindowStartupLocation="CenterScreen" Height="250" Width="300">
+        Title="Create New Floor" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Height="250" Width="300">
     <Grid>
         <Grid Margin="86,66,86,66">
             <Grid.RowDefinitions>

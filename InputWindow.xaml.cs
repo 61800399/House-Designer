@@ -178,18 +178,6 @@ namespace House_Designer
                     break;
             }
         }
-
-        private void AttachButt_Click(object sender, RoutedEventArgs e)
-        {
-            MainWin.AttachMode = true;
-            MainWin.AttachRoomSubject = Subject;
-        }
-
-        private void AttachSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            AttachIndex = AttachSelector.SelectedIndex;
-        }
-
         private void BaseRoomCheck_Checked(object sender, RoutedEventArgs e)
         {
             if (!this.IsInitialized)
@@ -197,6 +185,7 @@ namespace House_Designer
                 return;
             }
             Subject.IsBaseRoom = !Subject.IsBaseRoom;
+            MainWin.CurrentFloor.BaseRoom = Subject;
         }
         
         private void XCoordBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

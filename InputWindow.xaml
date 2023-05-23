@@ -37,14 +37,8 @@
                 <ComboBoxItem Background="#FF0056FF" Content="Blue" Tag="Blue"/>
                 <ComboBoxItem Background="Black" Content="Black/Empty" Tag="Black"/>
             </ComboBox>
-            <Button x:Name="AttachButt" Grid.Row="5" Grid.Column="0" Content="AttachRooms" Click="AttachButt_Click"/>
-            <ComboBox x:Name="AttachSelector" Grid.Row="5" Grid.Column="1" IsReadOnly="True" SelectedIndex="0" FontSize="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="AttachSelector_SelectionChanged">
-                <ComboBoxItem Content="Attach Right"/>
-                <ComboBoxItem Content="Attach Bottom"/>
-                <ComboBoxItem Content="Attach Left"/>
-                <ComboBoxItem Content="Attach Top"/>
-            </ComboBox>
-            <CheckBox x:Name="BaseRoomCheck" Grid.Row="7" Content="is Base room" Click="BaseRoomCheck_Checked"/>
+            
+            <CheckBox x:Name="BaseRoomCheck" Grid.Row="5" Content="is Base room" Click="BaseRoomCheck_Checked"/>
         </Grid>
         <Grid Margin="10,10,10,295">
             <Grid.ColumnDefinitions>

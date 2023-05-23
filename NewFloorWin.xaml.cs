@@ -31,6 +31,7 @@ namespace House_Designer
             Button S = sender as Button;
             int index = int.Parse(S.Tag.ToString());
             Main.FloorAdd((FloorAddLevel)index); // The Tag Above = 0, Below = 1
+            this.Close();
         }
 
     }

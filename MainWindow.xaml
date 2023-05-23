@@ -29,10 +29,11 @@
             </ComboBox>
             <StackPanel Grid.Column="3">
                 <Label Content="Floor Level" FontSize="16"/>
-                <ComboBox x:Name="HouseLevel" SelectedIndex="0" SelectionChanged="HouseLevel_SelectionChanged">
-                    <ComboBoxItem Content="Floor 0"/>
+                <ComboBox x:Name="HouseLevel" SelectedIndex="0" SelectionChanged="HouseLevel_SelectionChanged" DropDownClosed="LevelSelectClosed">
+                    <TextBox x:Name="GroundLevel" Text="Floor 0" IsReadOnly="True"/>
 
                 </ComboBox>
+                <Button x:Name="EditFloorBut" Content="Edit Floor(s)" Click="EditFloorBut_Click"/>
             </StackPanel>
             <Button x:Name="AddFloor" Content="Add new floor" Grid.Column="4" Click="AddFloor_Click"/>
         </Grid>

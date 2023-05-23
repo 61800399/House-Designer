@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,13 +12,10 @@ namespace House_Designer
     /// </summary>
     public partial class MainWindow : Window
     {
-        protected List<HouseRoom> Rooms = new List<HouseRoom>();
-        protected List<Floor> Floors = new List<Floor>();
-    
+        public List<Floor> Floors { get; private set; } = new List<Floor>();
         protected InputWindow OpenWin = null;
         protected NewRoomWin RoomWin;
-        public HouseRoom BaseRoom { get; set; } = null;
-        public Floor BaseFloor;
+        public Floor CurrentFloor;
         public bool AttachMode { get; set; } = false;
         public bool PlaceMode { get; set; } = false;
         public HouseRoom AttachRoomSubject { get; set; }
@@ -27,11 +25,12 @@ namespace House_Designer
         {
             InitializeComponent();
             Floor BF = new Floor(0, PlaceCanvas.Margin);
-            BaseFloor = BF;
-            BaseFloor.Margin = new Thickness(ScrnWidth, ScrnHeight, ScrnWidth, ScrnHeight);
+            CurrentFloor = BF;
+            //CurrentFloor.Margin = new Thickness(ScrnWidth, ScrnHeight, ScrnWidth, ScrnHeight);
             PlaceCanvas = null;
-            Screen.Children.Add(BaseFloor);
-            Floors.Add(BaseFloor);
+            Screen.Children.Add(CurrentFloor);
+            Floors.Add(CurrentFloor);
+            CurrentFloor.FloorName = "GroundFloor";
         }
         /// <summary>
         /// Player Clicks anywhere on the screen
@@ -41,19 +40,19 @@ namespace House_Designer
         protected void Canvas_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Window Win = sender as Window;
-            Point point = Mouse.GetPosition(BaseFloor);
+            Point point = Mouse.GetPosition(CurrentFloor);
             ClickLabel.Visibility = Visibility.Collapsed;
-            if (PlaceModeBox.IsDropDownOpen)
+            if (PlaceModeBox.IsDropDownOpen || HouseLevel.IsDropDownOpen)
             {
                 return;
             }
-            if (Rooms.Count > 0)
+            if (CurrentFloor.Rooms.Count > 0)
             {
                 OpenWin.Close();
             }
             if (PlaceMode)
             {
-                foreach (HouseRoom i in Rooms)
+                foreach (HouseRoom i in CurrentFloor.Rooms)
                 {
                     if (IsClicked(point, i))
                     {
@@ -64,7 +63,7 @@ namespace House_Designer
                 PlaceRoom(point);
                 RoomWin.Close();
             }
-            else if (BaseRoom != null && PlaceModeBox.SelectedIndex != 4)
+            else if (CurrentFloor.BaseRoom != null && PlaceModeBox.SelectedIndex != 4)
             {
                 return;
             }
@@ -93,8 +92,8 @@ namespace House_Designer
             HouseRoom.TilesSides side = HouseRoom.TilesSides.None; // sets side to default None
             HouseRoom Room = new HouseRoom(); // creates room
             #endregion
-            Rooms.Add(Room); // adds Room to list of Rooms
-            BaseFloor.Children.Add(Room); // puts Room on the canvas so its position properties can be edited
+            CurrentFloor.Rooms.Add(Room); // adds Room to list of Rooms
+            CurrentFloor.Children.Add(Room); // puts Room on the canvas so its position properties can be edited
             #region PlaceMode
             if (PlaceMode) // Player previously pressed place square button
             {
@@ -124,27 +123,27 @@ namespace House_Designer
             }
             if (TempPlaceMode && !TryAttach(side, Room) || point.X < 0 || point.Y < 0) // If room fails to attach - remove room
             {
-                BaseFloor.Children.Remove(Room);
+                CurrentFloor.Children.Remove(Room);
                 Room = null;
                 PlaceMode = false;
                 return;
             }
-            if (BaseRoom != null)
+            if (CurrentFloor.BaseRoom != null)
             {
-                BaseRoom.AttachedRooms.Add(Room);
+                CurrentFloor.BaseRoom.AttachedRooms.Add(Room);
             }
             #endregion
             #region Not PlaceMode
-            if (Rooms.Count <= 1) // Creates the BaseRoom first placed room by default
+            if (CurrentFloor.Rooms.Count <= 1) // Creates the BaseRoom first placed room by default
             {
                 Room.IsBaseRoom = true;
-                BaseRoom = Room;
+                CurrentFloor.BaseRoom = Room;
             }
             if (!TempPlaceMode || side == HouseRoom.TilesSides.FreeForm) // sets non Placemode Values
             {
                 if (CheckCollision(point.X, point.Y)) // checks for collision with other squares
                 {
-                    BaseFloor.Children.Remove(Room);
+                    CurrentFloor.Children.Remove(Room);
                     Room = null;
                     return;
                 }
@@ -178,7 +177,7 @@ namespace House_Designer
             {
                 return true;
             }
-            foreach (HouseRoom i in Rooms)
+            foreach (HouseRoom i in CurrentFloor.Rooms)
             {
                 HouseRoom.TilesSides AttachmentMode;
                 double AttachCoord;
@@ -192,7 +191,7 @@ namespace House_Designer
                     continue;
                 }
 
-                if (i == Room || i != AttachRoomSubject && IsClicked(Mouse.GetPosition(BaseFloor), i))
+                if (i == Room || i != AttachRoomSubject && IsClicked(Mouse.GetPosition(CurrentFloor), i))
                 {
                     if (Side != HouseRoom.TilesSides.None)
                     {
@@ -291,7 +290,7 @@ namespace House_Designer
         /// <returns>Whether a collision occured</returns>
         protected bool CheckCollision(double X, double Y)
         {
-            foreach (HouseRoom room in Rooms)
+            foreach (HouseRoom room in CurrentFloor.Rooms)
             {
                 if (X >= (double)room.GetValue(LeftProperty) && X < (double)room.GetValue(LeftProperty) + room.Width && Y >= (double)room.GetValue(TopProperty) && Y < (double)room.GetValue(TopProperty) + room.Height)
                 {
@@ -311,7 +310,7 @@ namespace House_Designer
             {
                 OpenWin.Close();
             }
-            InputWindow SettingWin = new InputWindow(this, Subject, Rooms, ScrnWidth, ScrnHeight);
+            InputWindow SettingWin = new InputWindow(this, Subject, CurrentFloor.Rooms, ScrnWidth, ScrnHeight);
 
             SettingWin.Show();
             OpenWin = SettingWin;
@@ -356,7 +355,13 @@ namespace House_Designer
 
         private void HouseLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (!this.IsInitialized)
+            {
+                return;
+            }
+            CurrentFloor.Visibility = Visibility.Collapsed;
+            CurrentFloor = Floors[HouseLevel.SelectedIndex];
+            CurrentFloor.Visibility = Visibility.Visible;
         }
         public void FloorAdd(FloorAddLevel Level)
         {
@@ -367,11 +372,11 @@ namespace House_Designer
             int floorLevel = -1;
             if (Level == FloorAddLevel.Above)
             {
-                floorLevel = HouseLevel.SelectedIndex + 1;
+                floorLevel = HouseLevel.SelectedIndex;
             }
             else if (Level == FloorAddLevel.Bottom)
             {
-                floorLevel = HouseLevel.SelectedIndex - 1;
+                floorLevel = HouseLevel.SelectedIndex + 1;
             }
             else if (Level == FloorAddLevel.SpecifiedIndex)
             {
@@ -381,18 +386,43 @@ namespace House_Designer
             {
                 return;
             }
-            Floor floor = new Floor(floorLevel, BaseFloor.Margin);
+            Floor floor = new Floor(floorLevel, CurrentFloor.Margin);
             Screen.Children.Add(floor);
             Floors.Insert(floorLevel, floor);
             AddComboBoxItem(HouseLevel, floor);
+            NewCurrentFloor(floor);
+            HouseLevel.SelectedIndex = floorLevel;
+            floor.FloorName = HouseLevel.Text;
+        }
+        private void NewCurrentFloor(Floor NewFloor)
+        {
+            CurrentFloor.Visibility = Visibility.Collapsed;
+            CurrentFloor = NewFloor;
         }
         private void AddComboBoxItem(ComboBox box, Floor floor)
         {
-            ComboBoxItem boxItem = new ComboBoxItem()
+            TextBox boxItem = new TextBox()
             {
-                Content = floor.FloorLevel,
+                Text = "New Floor",
+                IsReadOnly = true,
             };
             box.Items.Insert(floor.FloorLevel, boxItem);
+            //box.MouseDoubleClick += ;
+        }
+        
+        private void LevelSelectClosed(object sender, EventArgs e)
+        {
+            ComboBox comboBox = sender as ComboBox;
+            foreach (TextBox box in comboBox.Items)
+            {
+                box.IsReadOnly = true;
+            }
+        }
+
+        private void EditFloorBut_Click(object sender, RoutedEventArgs e)
+        {
+            EditRooms edit = new EditRooms(this);
+            edit.Show();
         }
     }
 }
