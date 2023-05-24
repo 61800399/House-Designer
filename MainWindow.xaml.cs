@@ -46,7 +46,7 @@ namespace House_Designer
             {
                 return;
             }
-            if (CurrentFloor.Rooms.Count > 0)
+            if (CurrentFloor.Rooms.Count > 0 && OpenWin != null)
             {
                 OpenWin.Close();
             }
@@ -393,6 +393,10 @@ namespace House_Designer
             NewCurrentFloor(floor);
             HouseLevel.SelectedIndex = floorLevel;
             floor.FloorName = HouseLevel.Text;
+            for (int i = 0; i < Floors.Count; i++)
+            {
+                Floors[i].FloorLevel = i;
+            }
         }
         private void NewCurrentFloor(Floor NewFloor)
         {
@@ -421,8 +425,13 @@ namespace House_Designer
 
         private void EditFloorBut_Click(object sender, RoutedEventArgs e)
         {
-            EditRooms edit = new EditRooms(this);
+            EditFloors edit = new EditFloors(this);
             edit.Show();
+        }
+        public List<Floor> ChangeList(List<Floor> list)
+        {
+            Floors = list;
+            return Floors;
         }
     }
 }

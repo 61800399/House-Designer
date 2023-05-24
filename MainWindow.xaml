@@ -36,6 +36,11 @@
                 <Button x:Name="EditFloorBut" Content="Edit Floor(s)" Click="EditFloorBut_Click"/>
             </StackPanel>
             <Button x:Name="AddFloor" Content="Add new floor" Grid.Column="4" Click="AddFloor_Click"/>
+            <StackPanel Grid.Column="5">
+                <Label Content="Building Name"/>
+                <TextBox x:Name="HouseName" Text="New House"/>
+            </StackPanel>
+            
         </Grid>
         <Label x:Name="ClickLabel" Content="Click anywhere to place the first room" Background="LightGray" FontSize="40" Margin="0,0,0,687"/>
         
