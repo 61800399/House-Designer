@@ -97,7 +97,7 @@ namespace House_Designer
         {
             FloorGrid.Children.Clear();
             int floorCount = 0;
-            for (int f = Main.Floors.Count; f >= 0; f--)
+            for (int f = Main.Floors.Count - 1; f >= 0; f--)
             {
                 Label label = new Label()
                 {
