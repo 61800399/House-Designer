@@ -18,6 +18,7 @@ public class HouseRoom : Label
         { TilesSides.Left, 1 },
         { TilesSides.Top, 1 },
     };
+    public RoomType Type { get; private set; }
     
     public List<HouseRoom> AttachedRooms { get; set; } = new List<HouseRoom>();
     public HouseRoom()
@@ -28,6 +29,17 @@ public class HouseRoom : Label
         this.BorderThickness = new Thickness(5);
         this.BorderBrush = Brushes.LightGray;
         this.Foreground = Brushes.Red;
+        this.Type = RoomType.Normal;
+    }
+    public HouseRoom(RoomType type)
+    {
+        this.Width = 100;
+        this.Height = 100;
+        this.Content = "New Room";
+        this.BorderThickness = new Thickness(5);
+        this.BorderBrush = Brushes.LightGray;
+        this.Foreground = Brushes.Red;
+        this.Type = type; 
     }
     public void UsedSide(TilesSides side)
     {
@@ -57,6 +69,13 @@ public class HouseRoom : Label
         Left = 2,
         Top = 3,
         FreeForm = 4
+    }
+    public enum RoomType
+    {
+        NA = -1,
+        Normal = 0,
+        StairUp = 1,
+        StairDown = 2,
     }
 }
 

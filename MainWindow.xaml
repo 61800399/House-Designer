@@ -43,6 +43,24 @@
             
         </Grid>
         <Label x:Name="ClickLabel" Content="Click anywhere to place the first room" Background="LightGray" FontSize="40" Margin="0,0,0,687"/>
-        
+        <Grid x:Name="Modifiers" Margin="0,97,1533,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="RoomSelectNormal" Content="Room" FontSize="12" Grid.Row="0" Background="LightGray" BorderThickness="5" BorderBrush="Blue" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
+            <Label x:Name="RoomSelectStairUp" Content="Stair Up" FontSize="9.5" Grid.Row="1" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
+            <Label x:Name="RoomSelectStairDown" Content="Stair down" FontSize="6" Grid.Row="2" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
+
+        </Grid>
+
     </Grid>
 </Window>

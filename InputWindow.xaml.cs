@@ -263,6 +263,11 @@ namespace House_Designer
                 Direction = HouseRoom.TilesSides.Bottom;
                 distance = (double)Subject.GetValue(TopProperty) - Coordinate;
             }
+            else if (BoxCoord == Coordinate)
+            {
+                Direction = HouseRoom.TilesSides.None;
+                distance = 0;
+            }
             else
             {
                 throw new Exception("Impossible coordinate");

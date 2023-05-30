@@ -27,6 +27,7 @@ namespace House_Designer
         {
             InitializeComponent();
             Main = M;
+            Main.FixFloors();
             UpdateScreen();            
         }
         private void FloorSelected(object sender, MouseButtonEventArgs e)
@@ -40,6 +41,7 @@ namespace House_Designer
                 FloorName.Text = Lab.Content.ToString();
                 FloorLevel.Text = floor.FloorLevel.ToString();
                 SelectedFloor = floor;
+                UpdateScreen();
                 InternalTimer();
             }
             
@@ -49,7 +51,7 @@ namespace House_Designer
             blockInput = true;
             for (int i = 0; i < 1; i++)
             {
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
             }
             blockInput = false;
             await Task.Run(() => { });
@@ -67,45 +69,53 @@ namespace House_Designer
 
         private void FloorLevel_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!this.IsInitialized || SelectedFloor == null)
+            TextBox box = sender as TextBox;
+            int.TryParse(box.Text, out int level);
+            if (!this.IsInitialized || SelectedFloor == null || blockInput || level > Main.Floors.Count - 1)
             {
                 return;
             }
-            TextBox box = sender as TextBox;
             List<Floor> list = new List<Floor>();
-            if (box != null && int.TryParse(box.Text, out int final) && final < Main.Floors.Count)
+            int count = 0;
+            foreach (Floor floor in Main.Floors)
             {
-                for (int i = 0; i < Main.Floors.Count; i++)
+                if (floor.FloorName == SelectedFloor.FloorName)
                 {
-                    if (Main.Floors[i] == SelectedFloor)
-                    {
-                        continue;
-                    }
-                    list.Add(Main.Floors[i]);
-                    Main.Floors[i].FloorLevel = i;
+                    floor.FloorLevel = level;
+                    continue;
                 }
-                list.Insert(final, SelectedFloor);
-                Main.ChangeList(list);
+                floor.FloorLevel = count;
+                list.Add(floor);
             }
-            else
-            {
-                e.Handled = true;
-            }
+            list.Insert(level, SelectedFloor);
+            Main.ChangeList(list);
+            Main.FixSelector();
+            FixList();
             UpdateScreen();
+        }
+        private void FixList()
+        {
+            for (int f = 0; f < Main.Floors.Count - 1; f++)
+            {
+                Main.Floors[f].FloorLevel = f;
+            }
         }
         private void UpdateScreen()
         {
             FloorGrid.Children.Clear();
             int floorCount = 0;
-            for (int f = Main.Floors.Count - 1; f >= 0; f--)
+            List<Floor> list = new List<Floor>();
+            list.AddRange(Main.Floors);
+            list.Reverse();
+            foreach (Floor f in list)
             {
                 Label label = new Label()
                 {
-                    Content = Main.Floors[f].FloorName,
+                    Content = f.FloorName,
                     Background = Brushes.LightGray,
                     BorderThickness = new Thickness(1),
                     BorderBrush = Brushes.Black,
-                    Tag = Main.Floors[f],
+                    Tag = f,
                 };
                 label.MouseLeftButtonDown += FloorSelected;
                 FloorGrid.Children.Add(label);

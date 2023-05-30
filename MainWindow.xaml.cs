@@ -16,6 +16,8 @@ namespace House_Designer
         protected InputWindow OpenWin = null;
         protected NewRoomWin RoomWin;
         public Floor CurrentFloor;
+        private bool BlockInput = false;
+        public HouseRoom.RoomType SelectedType { get; private set; }
         public bool AttachMode { get; set; } = false;
         public bool PlaceMode { get; set; } = false;
         public HouseRoom AttachRoomSubject { get; set; }
@@ -355,7 +357,7 @@ namespace House_Designer
 
         private void HouseLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!this.IsInitialized)
+            if (!this.IsInitialized || BlockInput)
             {
                 return;
             }
@@ -411,7 +413,6 @@ namespace House_Designer
                 IsReadOnly = true,
             };
             box.Items.Insert(floor.FloorLevel, boxItem);
-            //box.MouseDoubleClick += ;
         }
         
         private void LevelSelectClosed(object sender, EventArgs e)
@@ -432,6 +433,51 @@ namespace House_Designer
         {
             Floors = list;
             return Floors;
+        }
+        public void FixFloors()
+        {
+            if (Floors[0].FloorLevel == 0)
+            {
+                return;
+            }
+            List<Floor> list = Floors;
+            list.Reverse();
+            int count = 0;
+            foreach (Floor floor in list)
+            {
+                floor.FloorLevel = count;
+                count++;
+            }
+            FixSelector();
+        }
+        public void FixSelector()
+        {
+            BlockInput = true;
+            HouseLevel.Items.Clear();
+            foreach (Floor floor in Floors)
+            {
+                TextBox item = new TextBox()
+                {
+                    Text = floor.FloorName,
+                    IsReadOnly = true,
+                };
+                HouseLevel.Items.Add(item);
+            }
+            HouseLevel.SelectedIndex = 0;
+            BlockInput = false;
+        }
+
+        private void RoomSelect_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            foreach (Label L in Modifiers.Children)
+            {
+                if (L == sender as Label)
+                {
+                    L.BorderBrush = Brushes.Blue;
+                    continue;
+                }
+                L.BorderBrush = Brushes.LightGray;
+            }
         }
     }
 }
