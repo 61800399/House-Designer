@@ -56,9 +56,9 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Label x:Name="RoomSelectNormal" Content="Room" FontSize="12" Grid.Row="0" Background="LightGray" BorderThickness="5" BorderBrush="Blue" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
-            <Label x:Name="RoomSelectStairUp" Content="Stair Up" FontSize="9.5" Grid.Row="1" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
-            <Label x:Name="RoomSelectStairDown" Content="Stair down" FontSize="6" Grid.Row="2" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown"/>
+            <Label x:Name="RoomSelectNormal" Content="Room" FontSize="12" Grid.Row="0" Background="LightGray" BorderThickness="5" BorderBrush="Blue" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown" Tag="0"/>
+            <Label x:Name="RoomSelectStairUp" Content="Stair Up" FontSize="9.5" Grid.Row="1" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown" Tag="1"/>
+            <Label x:Name="RoomSelectStairDown" Content="Stair down" FontSize="6" Grid.Row="2" Background="LightGray" BorderThickness="5" BorderBrush="LightGray" MouseLeftButtonDown="RoomSelect_MouseLeftButtonDown" Tag="2"/>
 
         </Grid>
 

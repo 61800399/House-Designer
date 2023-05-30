@@ -10,7 +10,7 @@ namespace House_Designer
         public int FloorLevel { get; set; }
         public List<HouseRoom> Rooms { get; set; } = new List<HouseRoom>();
         public HouseRoom BaseRoom { get; set; } = null;
-
+        public Dictionary<int ,HouseRoom> Stairwells { get; internal set; }
         public Floor()
         {
             FloorLevel = 0;

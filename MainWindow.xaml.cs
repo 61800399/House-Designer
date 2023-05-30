@@ -17,7 +17,7 @@ namespace House_Designer
         protected NewRoomWin RoomWin;
         public Floor CurrentFloor;
         private bool BlockInput = false;
-        public HouseRoom.RoomType SelectedType { get; private set; }
+        public HouseRoom.RoomType SelectedType { get; private set; } = HouseRoom.RoomType.Normal;
         public bool AttachMode { get; set; } = false;
         public bool PlaceMode { get; set; } = false;
         public HouseRoom AttachRoomSubject { get; set; }
@@ -43,11 +43,12 @@ namespace House_Designer
         {
             Window Win = sender as Window;
             Point point = Mouse.GetPosition(CurrentFloor);
-            ClickLabel.Visibility = Visibility.Collapsed;
-            if (PlaceModeBox.IsDropDownOpen || HouseLevel.IsDropDownOpen)
+            
+            if (PlaceModeBox.IsDropDownOpen || HouseLevel.IsDropDownOpen || point.X < 0 || point.Y < 0)
             {
                 return;
             }
+            ClickLabel.Visibility = Visibility.Collapsed;
             if (CurrentFloor.Rooms.Count > 0 && OpenWin != null)
             {
                 OpenWin.Close();
@@ -92,7 +93,8 @@ namespace House_Designer
             #region Variables
             bool TempPlaceMode = false; // Creates bool for placement mode, defaults false
             HouseRoom.TilesSides side = HouseRoom.TilesSides.None; // sets side to default None
-            HouseRoom Room = new HouseRoom(); // creates room
+            HouseRoom Room = new HouseRoom(SelectedType, this); // creates room
+            CurrentFloor.Stairwells.Add((int)SelectedType, Room);
             #endregion
             CurrentFloor.Rooms.Add(Room); // adds Room to list of Rooms
             CurrentFloor.Children.Add(Room); // puts Room on the canvas so its position properties can be edited
@@ -375,6 +377,10 @@ namespace House_Designer
             if (Level == FloorAddLevel.Above)
             {
                 floorLevel = HouseLevel.SelectedIndex;
+                if (CurrentFloor.Stairwells.Count > 0) // finish adding stairwells between floors
+                {
+
+                }
             }
             else if (Level == FloorAddLevel.Bottom)
             {
@@ -469,11 +475,14 @@ namespace House_Designer
 
         private void RoomSelect_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            Label label = sender as Label;
             foreach (Label L in Modifiers.Children)
             {
-                if (L == sender as Label)
+                int.TryParse(label.Tag.ToString(), out int type);
+                if (L == label)
                 {
                     L.BorderBrush = Brushes.Blue;
+                    SelectedType = (HouseRoom.RoomType)type;
                     continue;
                 }
                 L.BorderBrush = Brushes.LightGray;

@@ -7,9 +7,11 @@ using System.Windows;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Linq;
+using House_Designer;
 
 public class HouseRoom : Label
 {
+    MainWindow Main;
     public bool IsBaseRoom { get; set; } = false;
     public Dictionary<TilesSides, uint> SidesLeft { get; set; } = new Dictionary<TilesSides, uint>()
     {
@@ -31,15 +33,40 @@ public class HouseRoom : Label
         this.Foreground = Brushes.Red;
         this.Type = RoomType.Normal;
     }
-    public HouseRoom(RoomType type)
+    public HouseRoom(RoomType type, MainWindow M)
     {
-        this.Width = 100;
-        this.Height = 100;
-        this.Content = "New Room";
+        Main = M;
         this.BorderThickness = new Thickness(5);
         this.BorderBrush = Brushes.LightGray;
         this.Foreground = Brushes.Red;
-        this.Type = type; 
+        this.Type = type;
+        Types();
+    }
+    private void Types()
+    {
+        if (this.Type == RoomType.Normal)
+        {
+            this.Width = 100;
+            this.Height = 100;
+            this.Content = "New Room";
+        }
+        else if (this.Type == RoomType.StairUp)
+        {
+            this.Width = 100;
+            this.Height = 50;
+            this.Content = "New StairsUp";
+            
+        }
+        else if (this.Type == RoomType.StairDown)
+        {
+            this.Width = 100;
+            this.Height = 50;
+            this.Content = "New StairsDown";
+        }
+        else
+        {
+            throw new Exception("Not a valid room");
+        }
     }
     public void UsedSide(TilesSides side)
     {
