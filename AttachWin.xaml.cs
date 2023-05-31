@@ -27,7 +27,7 @@ namespace House_Designer
         }
         private void Window_Closed(object sender, EventArgs e)
         {
-            Main.PlaceMode = false;
+
         }
     }
 }

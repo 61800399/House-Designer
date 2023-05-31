@@ -37,8 +37,8 @@
                 <ComboBoxItem Background="#FF0056FF" Content="Blue" Tag="Blue"/>
                 <ComboBoxItem Background="Black" Content="Black/Empty" Tag="Black"/>
             </ComboBox>
-            
             <CheckBox x:Name="BaseRoomCheck" Grid.Row="5" Content="is Base room" Click="BaseRoomCheck_Checked"/>
+            <Button x:Name="DeleteRoomButton" Grid.Row="6" Grid.Column="0" Content="DELETE" Background="Red" Click="DeleteRoomButton_Click"/>
         </Grid>
         <Grid Margin="10,10,10,295">
             <Grid.ColumnDefinitions>

@@ -19,7 +19,7 @@ namespace House_Designer
         private bool BlockInput = false;
         public HouseRoom.RoomType SelectedType { get; private set; } = HouseRoom.RoomType.Normal;
         public bool AttachMode { get; set; } = false;
-        public bool PlaceMode { get; set; } = false;
+        public bool PlaceMode { get; set; } = true;
         public HouseRoom AttachRoomSubject { get; set; }
         protected double ScrnWidth;
         protected double ScrnHeight;
@@ -48,6 +48,14 @@ namespace House_Designer
             {
                 return;
             }
+            if (ClickLabel.Visibility == Visibility.Visible)
+            {
+                PlaceMode = false;
+                PlaceRoom(point);
+                PlaceMode = true;
+                ClickLabel.Visibility = Visibility.Collapsed;
+                return;
+            }
             ClickLabel.Visibility = Visibility.Collapsed;
             if (CurrentFloor.Rooms.Count > 0 && OpenWin != null)
             {
@@ -64,7 +72,7 @@ namespace House_Designer
                     }
                 }
                 PlaceRoom(point);
-                RoomWin.Close();
+                return;
             }
             else if (CurrentFloor.BaseRoom != null && PlaceModeBox.SelectedIndex != 4)
             {
@@ -72,16 +80,10 @@ namespace House_Designer
             }
             if (AttachMode)
             {
-                OpenWin.Close();
-                RoomWin = new NewRoomWin(this);
-                RoomWin.Show();
                 TryAttach();
                 return;
             }
-            if (Win != null)
-            {
-                PlaceRoom(point);
-            }
+            
         }
 
         /// <summary>
@@ -94,7 +96,10 @@ namespace House_Designer
             bool TempPlaceMode = false; // Creates bool for placement mode, defaults false
             HouseRoom.TilesSides side = HouseRoom.TilesSides.None; // sets side to default None
             HouseRoom Room = new HouseRoom(SelectedType, this); // creates room
-            CurrentFloor.Stairwells.Add((int)SelectedType, Room);
+            if (Room.Type != HouseRoom.RoomType.Normal)
+            {
+                CurrentFloor.Stairwells.Add(Room);
+            }
             #endregion
             CurrentFloor.Rooms.Add(Room); // adds Room to list of Rooms
             CurrentFloor.Children.Add(Room); // puts Room on the canvas so its position properties can be edited
@@ -122,14 +127,17 @@ namespace House_Designer
                         side = HouseRoom.TilesSides.None;
                         return;
                 }
-                PlaceMode = false; // Property changed back
                 TempPlaceMode = true; // Temperarally keeps placemode
             }
             if (TempPlaceMode && !TryAttach(side, Room) || point.X < 0 || point.Y < 0) // If room fails to attach - remove room
             {
                 CurrentFloor.Children.Remove(Room);
+                Room.Visibility = Visibility.Collapsed;
                 Room = null;
-                PlaceMode = false;
+                if (OpenWin != null)
+                {
+                    OpenWin.Close();
+                }
                 return;
             }
             if (CurrentFloor.BaseRoom != null)
@@ -242,7 +250,7 @@ namespace House_Designer
                     {
                         i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty) + AttachRoomSubject.Height);
                     }
-                    AttachRoomSubject.UsedSide((HouseRoom.TilesSides)OpenWin.AttachIndex);
+                    AttachRoomSubject.UsedSide((HouseRoom.TilesSides)PlaceModeBox.SelectedIndex);
                     AttachMode = false;
                     AttachRoomSubject.AttachedRooms.Add(i);
                     break;
@@ -337,17 +345,7 @@ namespace House_Designer
         /// <param name="e">Routed Event</param>
         protected void PlaceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (PlaceMode && RoomWin != null)
-            {
-                RoomWin.Close();
-            }
-            else
-            {
-                RoomWin = new NewRoomWin(this);
-                RoomWin.Show();
-                PlaceMode = true;
-            }
-
+            
         }
 
 
@@ -363,9 +361,45 @@ namespace House_Designer
             {
                 return;
             }
+            List<(HouseRoom, Point)> Stairs = GetStairwells();
             CurrentFloor.Visibility = Visibility.Collapsed;
             CurrentFloor = Floors[HouseLevel.SelectedIndex];
             CurrentFloor.Visibility = Visibility.Visible;
+            //BuildStairwells(Stairs);
+        }
+        /// <summary>
+        /// Finds all StairCases on the current floor
+        /// </summary>
+        /// <returns>A list of each staircase and the point it is located at</returns>
+        private List<(HouseRoom, Point)> GetStairwells()
+        {
+            List<(HouseRoom, Point)> Stairwells = new List<(HouseRoom, Point)>();
+            if (CurrentFloor.Stairwells.Count > 0)
+            {
+                foreach (HouseRoom room in CurrentFloor.Stairwells)
+                {
+                    Point tl = room.GetLocation();
+                    Stairwells.Add((room, tl));
+                }
+            }
+            return Stairwells;
+        }
+        /// <summary>
+        /// Creates multiple staircases on the current room
+        /// </summary>
+        /// <param name="Stairs">The list of staircases to place</param>
+        private void BuildStairwells(List<(HouseRoom, Point)> Stairs)
+        {
+            PlaceMode = false;
+            if (Stairs.Count > 0)
+            {
+                for (int i = 0; i < Stairs.Count; i++)
+                {
+                    PlaceRoom(Stairs[i].Item2);
+                    CurrentFloor.Stairwells[0].Opacity = 0.5;
+                }
+            }
+            PlaceMode = true;
         }
         public void FloorAdd(FloorAddLevel Level)
         {
@@ -373,14 +407,11 @@ namespace House_Designer
         }
         public void FloorAdd(FloorAddLevel Level, int Specified_index)
         {
+            BlockInput = true;
             int floorLevel = -1;
             if (Level == FloorAddLevel.Above)
             {
                 floorLevel = HouseLevel.SelectedIndex;
-                if (CurrentFloor.Stairwells.Count > 0) // finish adding stairwells between floors
-                {
-
-                }
             }
             else if (Level == FloorAddLevel.Bottom)
             {
@@ -398,6 +429,7 @@ namespace House_Designer
             Screen.Children.Add(floor);
             Floors.Insert(floorLevel, floor);
             AddComboBoxItem(HouseLevel, floor);
+            List<(HouseRoom, Point)> StairWells = GetStairwells();
             NewCurrentFloor(floor);
             HouseLevel.SelectedIndex = floorLevel;
             floor.FloorName = HouseLevel.Text;
@@ -405,6 +437,8 @@ namespace House_Designer
             {
                 Floors[i].FloorLevel = i;
             }
+            BuildStairwells(StairWells);
+            BlockInput = false;
         }
         private void NewCurrentFloor(Floor NewFloor)
         {
@@ -486,6 +520,24 @@ namespace House_Designer
                     continue;
                 }
                 L.BorderBrush = Brushes.LightGray;
+            }
+        }
+        public void DeleteRoom(HouseRoom room)
+        {
+            if (room.IsBaseRoom)
+            {
+                CurrentFloor.BaseRoom = null;
+            }
+            if (room.Type != HouseRoom.RoomType.Normal)
+            {
+                CurrentFloor.Stairwells.Remove(room);
+            }
+            CurrentFloor.Rooms.Remove(room);
+            room.Visibility = Visibility.Collapsed;
+            room = null;
+            if (OpenWin != null)
+            {
+                OpenWin.Close();
             }
         }
     }

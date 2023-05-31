@@ -88,6 +88,13 @@ public class HouseRoom : Label
         Cursor.Y >= TopProperty && 
         Cursor.Y <= TopProperty + Room.Height);
     }
+    public Point GetLocation()
+    {
+        Point tl = new Point();
+        tl.X = (double)this.GetValue(Window.LeftProperty);
+        tl.Y = (double)this.GetValue(Window.TopProperty);
+        return tl;
+    }
     public enum TilesSides
     {
         None = -1,

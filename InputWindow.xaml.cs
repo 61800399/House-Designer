@@ -275,5 +275,10 @@ namespace House_Designer
             Subject.SetValue(TopProperty, Coordinate);
             ReAdjustRooms(distance, Direction);
         }
+
+        private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWin.DeleteRoom(Subject);
+        }
     }
 }
