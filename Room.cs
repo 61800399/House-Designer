@@ -12,6 +12,7 @@ using House_Designer;
 public class HouseRoom : Label
 {
     MainWindow Main;
+    public bool IsGhost { get; private set; } = false;
     public bool IsBaseRoom { get; set; } = false;
     public Dictionary<TilesSides, uint> SidesLeft { get; set; } = new Dictionary<TilesSides, uint>()
     {
@@ -94,6 +95,29 @@ public class HouseRoom : Label
         tl.X = (double)this.GetValue(Window.LeftProperty);
         tl.Y = (double)this.GetValue(Window.TopProperty);
         return tl;
+    }
+    public void ToggleGhostMode()
+    {
+        ToggleGhostMode(false, true);
+    }
+    public void ToggleGhostMode(bool mode)
+    {
+        ToggleGhostMode(mode, false);
+    }
+    public void ToggleGhostMode(bool mode, bool toggled)
+    {
+        if (toggled)
+        {
+            this.IsGhost = !this.IsGhost;
+        }
+        else if (!toggled)
+        {
+            this.IsGhost = mode;
+        }
+        else
+        {
+            throw new Exception();
+        }
     }
     public enum TilesSides
     {

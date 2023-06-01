@@ -24,6 +24,7 @@ namespace House_Designer
         private List<HouseRoom> Rooms;
         private double MainScrnWidth;
         private double MainScrnHeight;
+        private bool keptGhost = false;
         public int AttachIndex { get; set; }
         public InputWindow(MainWindow window, HouseRoom SubjectRoom, List<HouseRoom> F, double scrnwidth, double scrnheight)
         {
@@ -43,6 +44,10 @@ namespace House_Designer
             if (SubjectRoom.IsBaseRoom)
             {
                 BaseRoomCheck.IsChecked = true;
+            }
+            if (Subject.IsGhost)
+            {
+                KeepGhost.Visibility = Visibility.Visible;
             }
         }
         public InputWindow GetWindow()
@@ -279,6 +284,23 @@ namespace House_Designer
         private void DeleteRoomButton_Click(object sender, RoutedEventArgs e)
         {
             MainWin.DeleteRoom(Subject);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (!keptGhost && Subject.IsGhost)
+            {
+                MainWin.DeleteRoom(Subject);
+                Subject.ToggleGhostMode(false);
+            }
+        }
+
+        private void KeepGhost_Click(object sender, RoutedEventArgs e)
+        {
+            keptGhost = true;
+            this.Close();
+            Subject.Opacity = 1;
+            Subject.ToggleGhostMode(false);
         }
     }
 }

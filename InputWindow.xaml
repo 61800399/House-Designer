@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:House_Designer"
         mc:Ignorable="d"
-        Title="InputWindow" WindowStartupLocation="CenterScreen" Height="400" Width="275" ResizeMode="NoResize">
+        Title="InputWindow" WindowStartupLocation="CenterScreen" Height="400" Width="275" ResizeMode="NoResize" Closed="Window_Closed">
     <Grid>
         <Grid x:Name="PropertiesGrid" Margin="44,77,45,62">
             <Grid.RowDefinitions>
@@ -39,6 +39,7 @@
             </ComboBox>
             <CheckBox x:Name="BaseRoomCheck" Grid.Row="5" Content="is Base room" Click="BaseRoomCheck_Checked"/>
             <Button x:Name="DeleteRoomButton" Grid.Row="6" Grid.Column="0" Content="DELETE" Background="Red" Click="DeleteRoomButton_Click"/>
+            <Button x:Name="KeepGhost" Grid.Row="7" Grid.ColumnSpan="2" Content="Keep StairWell?" Background="LightGreen" Visibility="Collapsed" Click="KeepGhost_Click"/>
         </Grid>
         <Grid Margin="10,10,10,295">
             <Grid.ColumnDefinitions>
@@ -47,6 +48,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Room Name: " FontSize="20"/>
             <TextBox x:Name="RoomName" Grid.Column="1" FontSize="20" TextWrapping="NoWrap" Text="NewRoom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="RoomName_TextInput"/>
+            
         </Grid>
     </Grid>
 </Window>

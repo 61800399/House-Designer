@@ -81,6 +81,7 @@
       <DependentUpon>NewFloorWin.xaml</DependentUpon>
     </Compile>
     <Compile Include="Room.cs" />
+    <Compile Include="RoomNotAttachableException.cs" />
     <Page Include="AttachWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

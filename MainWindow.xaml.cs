@@ -28,7 +28,6 @@ namespace House_Designer
             InitializeComponent();
             Floor BF = new Floor(0, PlaceCanvas.Margin);
             CurrentFloor = BF;
-            //CurrentFloor.Margin = new Thickness(ScrnWidth, ScrnHeight, ScrnWidth, ScrnHeight);
             PlaceCanvas = null;
             Screen.Children.Add(CurrentFloor);
             Floors.Add(CurrentFloor);
@@ -43,7 +42,10 @@ namespace House_Designer
         {
             Window Win = sender as Window;
             Point point = Mouse.GetPosition(CurrentFloor);
-            
+            foreach (HouseRoom Stair in CurrentFloor.Stairwells)
+            {
+                Stair.ToggleGhostMode(false);
+            }
             if (PlaceModeBox.IsDropDownOpen || HouseLevel.IsDropDownOpen || point.X < 0 || point.Y < 0)
             {
                 return;
@@ -185,77 +187,88 @@ namespace House_Designer
         /// <returns>Whether the process succeded</returns>
         protected bool TryAttach(HouseRoom.TilesSides Side, HouseRoom Room)
         {
-            if (Side == HouseRoom.TilesSides.FreeForm)
+            try
             {
-                return true;
+                if (Side == HouseRoom.TilesSides.FreeForm)
+                {
+                    return true;
+                }
+                if (Room == null || AttachRoomSubject == null)
+                {
+                    throw new ExceptionRoomNotAttachable();
+                }
+                foreach (HouseRoom i in CurrentFloor.Rooms)
+                {
+                    HouseRoom.TilesSides AttachmentMode;
+                    double AttachCoord;
+                    double AttachRight = (double)AttachRoomSubject.GetValue(LeftProperty) + AttachRoomSubject.Width;
+                    double AttachBottom = (double)AttachRoomSubject.GetValue(LeftProperty);
+                    double AttachLeft = (double)AttachRoomSubject.GetValue(LeftProperty) - i.Width;
+                    double AttachTop = (double)AttachRoomSubject.GetValue(LeftProperty);
+                    int Index = OpenWin.AttachIndex;
+                    if (AttachRoomSubject.AttachedRooms.Contains(i))
+                    {
+                        continue;
+                    }
+
+                    if (i == Room || i != AttachRoomSubject && IsClicked(Mouse.GetPosition(CurrentFloor), i))
+                    {
+                        if (Side != HouseRoom.TilesSides.None)
+                        {
+                            Index = (int)Side;
+                        }
+                        switch (Index)
+                        {
+                            case 0:
+                                AttachmentMode = HouseRoom.TilesSides.Right;
+                                AttachCoord = AttachRight;
+                                break;
+                            case 1:
+                                AttachmentMode = HouseRoom.TilesSides.Bottom;
+                                AttachCoord = AttachBottom;
+                                break;
+                            case 2:
+                                AttachmentMode = HouseRoom.TilesSides.Left;
+                                AttachCoord = AttachLeft;
+                                break;
+                            case 3:
+                                AttachmentMode = HouseRoom.TilesSides.Top;
+                                AttachCoord = AttachTop;
+                                break;
+                            default:
+                                AttachmentMode = HouseRoom.TilesSides.Right;
+                                AttachCoord = AttachRight;
+                                break;
+                        }
+                        if (AttachRoomSubject.SidesLeft[(HouseRoom.TilesSides)Index] == 0)
+                        {
+                            throw new ExceptionRoomNotAttachable();
+                        }
+                        i.SetValue(LeftProperty, AttachCoord);
+                        if (AttachmentMode == HouseRoom.TilesSides.Left || AttachmentMode == HouseRoom.TilesSides.Right)
+                        {
+                            i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty));
+                        }
+                        else if (AttachmentMode == HouseRoom.TilesSides.Top)
+                        {
+                            i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty) - i.Height);
+                        }
+                        else
+                        {
+                            i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty) + AttachRoomSubject.Height);
+                        }
+                        AttachRoomSubject.UsedSide((HouseRoom.TilesSides)PlaceModeBox.SelectedIndex);
+                        AttachMode = false;
+                        AttachRoomSubject.AttachedRooms.Add(i);
+                        break;
+                    }
+                }
             }
-            foreach (HouseRoom i in CurrentFloor.Rooms)
+            catch (Exception ex) when (ex is ExceptionRoomNotAttachable)
             {
-                HouseRoom.TilesSides AttachmentMode;
-                double AttachCoord;
-                double AttachRight = (double)AttachRoomSubject.GetValue(LeftProperty) + AttachRoomSubject.Width;
-                double AttachBottom = (double)AttachRoomSubject.GetValue(LeftProperty);
-                double AttachLeft = (double)AttachRoomSubject.GetValue(LeftProperty) - i.Width;
-                double AttachTop = (double)AttachRoomSubject.GetValue(LeftProperty);
-                int Index = OpenWin.AttachIndex;
-                if (AttachRoomSubject.AttachedRooms.Contains(i))
-                {
-                    continue;
-                }
-
-                if (i == Room || i != AttachRoomSubject && IsClicked(Mouse.GetPosition(CurrentFloor), i))
-                {
-                    if (Side != HouseRoom.TilesSides.None)
-                    {
-                        Index = (int)Side;
-
-                    }
-                    switch (Index)
-                    {
-                        case 0:
-                            AttachmentMode = HouseRoom.TilesSides.Right;
-                            AttachCoord = AttachRight;
-                            break;
-                        case 1:
-                            AttachmentMode = HouseRoom.TilesSides.Bottom;
-                            AttachCoord = AttachBottom;
-                            break;
-                        case 2:
-                            AttachmentMode = HouseRoom.TilesSides.Left;
-                            AttachCoord = AttachLeft;
-                            break;
-                        case 3:
-                            AttachmentMode = HouseRoom.TilesSides.Top;
-                            AttachCoord = AttachTop;
-                            break;
-                        default:
-                            AttachmentMode = HouseRoom.TilesSides.Right;
-                            AttachCoord = AttachRight;
-                            break;
-                    }
-                    if (AttachRoomSubject.SidesLeft[(HouseRoom.TilesSides)Index] == 0)
-                    {
-                        return false;
-                    }
-                    i.SetValue(LeftProperty, AttachCoord);
-                    if (AttachmentMode == HouseRoom.TilesSides.Left || AttachmentMode == HouseRoom.TilesSides.Right)
-                    {
-                        i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty));
-                    }
-                    else if (AttachmentMode == HouseRoom.TilesSides.Top)
-                    {
-                        i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty) - i.Height);
-                    }
-                    else
-                    {
-                        i.SetValue(TopProperty, (double)AttachRoomSubject.GetValue(TopProperty) + AttachRoomSubject.Height);
-                    }
-                    AttachRoomSubject.UsedSide((HouseRoom.TilesSides)PlaceModeBox.SelectedIndex);
-                    AttachMode = false;
-                    AttachRoomSubject.AttachedRooms.Add(i);
-                    break;
-                }
+                return false;
             }
+            
             return true;
         }
         /// <summary>
@@ -338,16 +351,6 @@ namespace House_Designer
             }
         }
 
-        /// <summary>
-        /// The button to place a new room was clicked
-        /// </summary>
-        /// <param name="sender">Button</param>
-        /// <param name="e">Routed Event</param>
-        protected void PlaceButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
 
         private void AddFloor_Click(object sender, RoutedEventArgs e)
         {
@@ -361,11 +364,9 @@ namespace House_Designer
             {
                 return;
             }
-            List<(HouseRoom, Point)> Stairs = GetStairwells();
             CurrentFloor.Visibility = Visibility.Collapsed;
             CurrentFloor = Floors[HouseLevel.SelectedIndex];
             CurrentFloor.Visibility = Visibility.Visible;
-            //BuildStairwells(Stairs);
         }
         /// <summary>
         /// Finds all StairCases on the current floor
@@ -373,11 +374,19 @@ namespace House_Designer
         /// <returns>A list of each staircase and the point it is located at</returns>
         private List<(HouseRoom, Point)> GetStairwells()
         {
+            return GetStairwells(HouseRoom.RoomType.NA);
+        }
+        private List<(HouseRoom, Point)> GetStairwells(HouseRoom.RoomType Direction)
+        {
             List<(HouseRoom, Point)> Stairwells = new List<(HouseRoom, Point)>();
             if (CurrentFloor.Stairwells.Count > 0)
             {
                 foreach (HouseRoom room in CurrentFloor.Stairwells)
                 {
+                    if (room.Type != Direction && Direction != HouseRoom.RoomType.NA)
+                    {
+                        continue;
+                    }
                     Point tl = room.GetLocation();
                     Stairwells.Add((room, tl));
                 }
@@ -393,10 +402,24 @@ namespace House_Designer
             PlaceMode = false;
             if (Stairs.Count > 0)
             {
+                HouseRoom.RoomType oldType = SelectedType;
+                HouseRoom.RoomType type = HouseRoom.RoomType.NA;
                 for (int i = 0; i < Stairs.Count; i++)
                 {
+                    switch (Stairs[i].Item1.Type)
+                    {
+                        case HouseRoom.RoomType.StairUp:
+                            type = HouseRoom.RoomType.StairDown;
+                            break;
+                        case HouseRoom.RoomType.StairDown:
+                            type = HouseRoom.RoomType.StairUp;
+                            break;
+                    }
+                    SelectedType = type;
                     PlaceRoom(Stairs[i].Item2);
-                    CurrentFloor.Stairwells[0].Opacity = 0.5;
+                    CurrentFloor.Stairwells[i].ToggleGhostMode(true);
+                    CurrentFloor.Stairwells[i].Opacity = 0.5;
+                    SelectedType = oldType;
                 }
             }
             PlaceMode = true;
@@ -409,12 +432,15 @@ namespace House_Designer
         {
             BlockInput = true;
             int floorLevel = -1;
+            HouseRoom.RoomType type = HouseRoom.RoomType.NA;
             if (Level == FloorAddLevel.Above)
             {
+                type = HouseRoom.RoomType.StairUp;
                 floorLevel = HouseLevel.SelectedIndex;
             }
             else if (Level == FloorAddLevel.Bottom)
             {
+                type = HouseRoom.RoomType.StairDown;
                 floorLevel = HouseLevel.SelectedIndex + 1;
             }
             else if (Level == FloorAddLevel.SpecifiedIndex)
@@ -429,7 +455,7 @@ namespace House_Designer
             Screen.Children.Add(floor);
             Floors.Insert(floorLevel, floor);
             AddComboBoxItem(HouseLevel, floor);
-            List<(HouseRoom, Point)> StairWells = GetStairwells();
+            List<(HouseRoom, Point)> StairWells = GetStairwells(type);
             NewCurrentFloor(floor);
             HouseLevel.SelectedIndex = floorLevel;
             floor.FloorName = HouseLevel.Text;
@@ -538,6 +564,20 @@ namespace House_Designer
             if (OpenWin != null)
             {
                 OpenWin.Close();
+            }
+        }
+
+        private void Scale_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                ScaleBox.Height += e.Delta;
+                //ScaleBox.Width += e.Delta;
+            }
+            else
+            {
+                ScaleBox.Height -= e.Delta;
+                //ScaleBox.Width -= e.Delta;
             }
         }
     }
