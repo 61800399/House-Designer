@@ -32,6 +32,8 @@ namespace House_Designer
             Screen.Children.Add(CurrentFloor);
             Floors.Add(CurrentFloor);
             CurrentFloor.FloorName = "GroundFloor";
+            ScaleBox.Width = ScrnWidth;
+            ScaleBox.Height = ScrnHeight;
         }
         /// <summary>
         /// Player Clicks anywhere on the screen
@@ -569,15 +571,16 @@ namespace House_Designer
 
         private void Scale_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            ScaleBox.Stretch = Stretch.Uniform;
             if (e.Delta > 0)
             {
-                ScaleBox.Height += e.Delta;
-                //ScaleBox.Width += e.Delta;
+                Test.Height += e.Delta;
+                Test.Width += e.Delta;
             }
             else
             {
-                ScaleBox.Height -= e.Delta;
-                //ScaleBox.Width -= e.Delta;
+                Test.Height -= e.Delta;
+                Test.Width -= e.Delta;
             }
         }
     }
