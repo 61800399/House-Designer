@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:House_Designer"
         mc:Ignorable="d"
         Title="House Designer" Height="800" Width="1600" PreviewMouseLeftButtonDown="Canvas_PreviewMouseLeftButtonDown" WindowState="Maximized" Loaded="Canvas_Loaded"  MouseWheel="Scale_MouseWheel">
-    <Viewbox Stretch="UniformToFill">
+    <Viewbox x:Name="Test" Stretch="UniformToFill">
         <Grid x:Name="Screen">
-            <Viewbox x:Name="ScaleBox" Stretch="UniformToFill">
+            <Viewbox x:Name="ScaleBox">
                 <Canvas x:Name="PlaceCanvas" Margin="72,102,0,0"/>
             </Viewbox>
             <Grid Margin="0,0,0,687">
